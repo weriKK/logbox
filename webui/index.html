@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+        <title>LogBOX</title>
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
+        <link rel="icon" href="data:;base64,iVBORw0KGgo=">        
+        <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+        <script src='main.js' defer></script>
+    </head>
+
+    <body>
+
+        <nav>
+            <form id="searchbox">
+                <div class="search row">
+                    <input autofocus="" type="search" placeholder="Search query" />
+                </div>
+                <div class="settings row">
+                    
+                    <select class="mode">
+                        <option value="stream">Live stream</option>
+                        <option value="query">Query</option>
+                    </select>
+
+                    <span>as</span>
+
+                    <select class="format">
+                        <option value="text">plain text</option>
+                        <option value="json">json</option>
+                    </select>
+
+                    <span>from</span>
+
+                    <select class="timerange">
+                        <option value="5m">5 min</option>
+                        <option value="15m">15 min</option>
+                        <option value="1h">1 hour</option>
+                        <option value="12h">12 hours</option>
+                        <option value="1d">1 day</option>
+                        <option value="3d">3 days</option>
+                        <option value="1w">1 week</option>
+                    </select>
+
+                    <span>ago</span>
+                </div>
+            </form>        
+        </nav>
+
+        <main>
+            <table id="logTable">
+                <tr><td>No log messages</td></tr>
+            </table>
+        </main>
+        
+        <footer>
+            <p>This is useless, remove it later</p>
+        </footer>
+        
+    </body>
+</html>

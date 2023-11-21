@@ -1,0 +1,94 @@
+html {
+    font-family: "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"
+}
+
+body {
+    margin: 0px;
+    width: 100%;
+}
+  
+table {
+    border-collapse: collapse;
+    /* border: 2px solid rgb(200,200,200); */
+    /* letter-spacing: 1px; */
+    /* font-size: 0.8rem; */
+    width: 100%;
+}
+  
+td, th {
+    border: 1px solid rgb(235, 235, 235);
+    padding: 10px 20px;
+}
+  
+th {
+    background-color: rgb(235,235,235);
+}
+  
+td {
+    text-align: left;
+}
+  
+tr:nth-child(even) td {
+    background-color: rgb(250,250,250);
+}
+  
+tr:nth-child(odd) td {
+    background-color: rgb(245,245,245);
+}
+  
+caption {
+    padding: 10px;
+}
+
+nav {
+    margin: 25px auto;
+    width: 90%;
+    border: 1px solid #BBB;
+    box-shadow: 3px 3px 10px 0px rgba(0,0,0,0.75);
+}
+
+.row{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+
+    padding: 15px;
+    flex: 1 1 auto;       
+}
+
+.search {
+    border-bottom: 1px solid #DDD;
+}
+
+form#searchbox input,span,select {
+    border: none;
+    outline: none;
+    font-size:pet;
+}
+
+form#searchbox input {
+    flex: 1 1 auto;
+}
+
+form#searchbox span {
+    font-style: italic;
+    padding: 0 15px;
+}
+
+form#searchbox select {
+    font-weight: bold;
+
+    background: transparent;
+    appearance: none;
+
+    cursor: pointer;
+}
+
+.mode,.format,.timerange{
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+
+  

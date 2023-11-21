@@ -8,6 +8,12 @@
 *.so
 *.dylib
 
+# Databases
+*.db
+
+# Build output
+logbox
+
 # Test binary, built with `go test -c`
 *.test
 
