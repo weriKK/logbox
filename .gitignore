@@ -12,7 +12,7 @@
 *.db
 
 # Build output
-logbox
+bin/
 
 # Test binary, built with `go test -c`
 *.test

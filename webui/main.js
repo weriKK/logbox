@@ -1,18 +1,24 @@
-const footer = document.querySelector("footer p");
-const url = "http://localhost:8080/query";
+function submitQuery(queryMsg="") {
+    let url = "/query";
 
-fetch(url)
-.then((response) => {
-    if (!response.ok) {
-        throw new Error(`HTTP error: ${response.status}`);
+    if (queryMsg !== "") {
+        url = url + "?q=" + queryMsg;
     }
+    
 
-    return response.json();
-})
-.then((json) => populateLogTable(json))
-.catch((error) => {
-    footer.textContent = `Could not fetch log messages: ${error}`;
-})
+    fetch(url)
+    .then((response) => {
+        if (!response.ok) {
+            throw new Error(`HTTP error: ${response.status}`);
+        }
+    
+        return response.json();
+    })
+    .then((json) => populateLogTable(json))
+    .catch((error) => {
+        footer.textContent = `Could not fetch log messages: ${error}`;
+    })
+}
 
 function populateLogTable(logMessages) {
 
@@ -29,3 +35,14 @@ function populateLogTable(logMessages) {
     }
 
 };
+
+let searchForm = document.getElementById("searchForm");
+searchForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    let searchInput = document.getElementById("searchInput");
+    submitQuery(searchInput.value);
+})
+
+const body = document.querySelector('body');
+body.onload =  submitQuery();

@@ -60,22 +60,22 @@ nav {
     border-bottom: 1px solid #DDD;
 }
 
-form#searchbox input,span,select {
+form#searchForm input,span,select {
     border: none;
     outline: none;
     font-size:pet;
 }
 
-form#searchbox input {
+form#searchForm input {
     flex: 1 1 auto;
 }
 
-form#searchbox span {
+form#searchForm span {
     font-style: italic;
     padding: 0 15px;
 }
 
-form#searchbox select {
+form#searchForm select {
     font-weight: bold;
 
     background: transparent;

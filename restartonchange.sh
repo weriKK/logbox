@@ -9,8 +9,8 @@ sigint_handler()
 trap sigint_handler INT
 
 while true; do
-  go build -o logbox .
-  ./logbox &
+  go build -o bin/logbox .
+  ./bin/logbox &
 
   PID=$!
   inotifywait -e modify -e move -e create -e delete -e attrib -r `pwd`

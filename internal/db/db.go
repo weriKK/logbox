@@ -23,9 +23,8 @@ func init() {
 
 func Query(queryString string) *[]common.LogMessage {
 
-	// TODO: normal query from website
-
-	// TODO: TCP interface to stream messages to logbox
+	// TODO: stream messages to logbox
+	// What's the best/simplest way to get logs into logbox from files, folders, stdouts
 	// see oklog netcat streaming for inspiration
 
 	// TODO Use Full Text search with highlights!
@@ -38,6 +37,8 @@ func Query(queryString string) *[]common.LogMessage {
 	// TODO stream/paginate as scrolling
 
 	// TODO live updates as new logs enter the system
+
+	// TODO: unshittyfy the code :)
 
 	q := "SELECT * FROM logs"
 
