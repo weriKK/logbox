@@ -27,6 +27,8 @@ func Query(queryString string) *[]common.LogMessage {
 	// What's the best/simplest way to get logs into logbox from files, folders, stdouts
 	// see oklog netcat streaming for inspiration
 
+	// TODO: Show last entry after query
+
 	// TODO Use Full Text search with highlights!
 	// https://www.sqlitetutorial.net/sqlite-full-text-search/
 
@@ -37,6 +39,8 @@ func Query(queryString string) *[]common.LogMessage {
 	// TODO stream/paginate as scrolling
 
 	// TODO live updates as new logs enter the system
+
+	// TODO: show last entry during live updates
 
 	// TODO: unshittyfy the code :)
 
