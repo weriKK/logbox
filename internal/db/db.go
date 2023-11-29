@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"logbox/internal/common"
+	"strings"
 
 	_ "modernc.org/sqlite"
 )
@@ -18,6 +19,38 @@ func init() {
 	db, err = sql.Open("sqlite", logfile)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	// unixepoch() was added in sqlite3 3.38.., ubuntu 22.04 only installs 3.37...
+	// const create string = `CREATE TABLE IF NOT EXISTS logs (
+	// 	id INTEGER NOT NULL PRIMARY KEY,
+	// 	timestamp INTEGER DEFAULT (unixepoch('now','subsec')),
+	// 	message TEXT
+	// );`
+
+	const create string = `CREATE TABLE IF NOT EXISTS logs (
+		id INTEGER NOT NULL PRIMARY KEY,
+		timestamp INTEGER DEFAULT (cast(strftime('%s', 'now') as int)),
+		message TEXT
+	);`
+
+	if _, err := db.Exec(create); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func Store(msg common.LogMessage) {
+
+	m := strings.TrimSpace(msg.Message)
+	log.Printf("%x", []byte(m))
+	if msg.Message == "" {
+		return
+	}
+
+	// TODO: timestamp
+	insert := "INSERT INTO logs (message) VALUES(?)"
+	if _, err := db.Exec(insert, msg.Message); err != nil {
+		log.Println(err)
 	}
 }
 
@@ -59,7 +92,7 @@ func Query(queryString string) *[]common.LogMessage {
 
 	for rows.Next() {
 		l := common.LogMessage{}
-		err = rows.Scan(&l.Id, &l.Message)
+		err = rows.Scan(&l.Id, &l.Timestamp, &l.Message)
 		if err != nil {
 			log.Println(err)
 		}

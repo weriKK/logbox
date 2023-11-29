@@ -9,11 +9,13 @@ sigint_handler()
 trap sigint_handler INT
 
 while true; do
+  printf "\n\n"
+  
   go build -o bin/logbox .
   ./bin/logbox &
 
   PID=$!
-  inotifywait -e modify -e move -e create -e delete -e attrib -r `pwd`
+  inotifywait -e modify -e move -e create -e delete -e attrib --exclude "logs.db" -r `pwd`
 
   while test -d "/proc/$PID";  do
     kill $PID

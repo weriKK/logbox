@@ -28,12 +28,15 @@ function populateLogTable(logMessages) {
         logTable.removeChild(logTable.firstChild)
     }
 
+    if (logMessages.length === 0) {
+        logMessages.push({"m":"No log messages"})
+    }
+    
     for (const logMsg of logMessages) {
         var row = logTable.insertRow();
         var cell = row.insertCell();
         cell.innerHTML = logMsg.m;
     }
-
 };
 
 let searchForm = document.getElementById("searchForm");
