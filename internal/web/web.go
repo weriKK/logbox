@@ -5,6 +5,8 @@ import (
 	"net"
 	"net/http"
 	"syscall"
+
+	"golang.org/x/net/websocket"
 )
 
 func RunWebServer() {
@@ -30,6 +32,9 @@ func RunWebServer() {
 
 	fs := http.FileServer(http.Dir("./webui"))
 	http.Handle("/", fs)
+
+	http.Handle("/events", websocket.Handler(wsHandler))
+
 	http.HandleFunc("/query", queryHandler)
 
 	// go func() {

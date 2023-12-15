@@ -45,6 +45,9 @@ nav {
     width: 90%;
     border: 1px solid #BBB;
     box-shadow: 3px 3px 10px 0px rgba(0,0,0,0.75);
+    position: sticky;
+    top: 25px;
+    background-color: white;
 }
 
 .row{

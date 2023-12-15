@@ -2,7 +2,10 @@ module logbox
 
 go 1.21.4
 
-require modernc.org/sqlite v1.27.0
+require (
+	golang.org/x/net v0.0.0-20201021035429-f5854403a974
+	modernc.org/sqlite v1.27.0
+)
 
 require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
