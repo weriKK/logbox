@@ -54,6 +54,61 @@ func Store(msg common.LogMessage) {
 	}
 }
 
+type SelectMessageQuery struct {
+	table      string
+	field      string
+	pattern    string
+	startingId int
+}
+
+func (q *SelectMessageQuery) defaultValues() {
+	q.table = "logs"
+	q.field = "message"
+	q.pattern = ""
+	q.startingId = 0
+}
+
+func NewSelectMessageQuery() *SelectMessageQuery {
+	q := new(SelectMessageQuery)
+	q.defaultValues()
+	return q
+}
+
+func (q *SelectMessageQuery) WithPattern(p string) *SelectMessageQuery {
+	q.pattern = p
+	return q
+}
+
+func (q *SelectMessageQuery) WithStartingId(id int) *SelectMessageQuery {
+	q.startingId = id
+	return q
+}
+
+func (q *SelectMessageQuery) Build() string {
+
+	conditions := make([]string, 0)
+
+	if q.pattern != "" {
+		cond := fmt.Sprintf("%s LIKE '%%%s%%'", q.field, q.pattern)
+		conditions = append(conditions, cond)
+	}
+
+	if q.startingId > 0 {
+		cond := fmt.Sprintf("id > %d", q.startingId)
+		conditions = append(conditions, cond)
+	}
+
+	query := fmt.Sprintf("SELECT * FROM %s", q.table)
+	if 0 < len(conditions) {
+		query += " WHERE "
+		query += strings.Join(conditions, " AND ")
+	}
+
+	log.Println(query)
+
+	return query
+}
+
 func Query(queryString string) *[]common.LogMessage {
 
 	// TODO: stream messages to logbox
@@ -80,7 +135,7 @@ func Query(queryString string) *[]common.LogMessage {
 	q := "SELECT * FROM logs"
 
 	if queryString != "" {
-		q = fmt.Sprintf("SELECT * FROM logs WHERE message LIKE '%%%s%%'", queryString)
+		q = queryString
 	}
 
 	rows, err := db.Query(q)
