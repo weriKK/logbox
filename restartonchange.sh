@@ -15,7 +15,7 @@ while true; do
   ./bin/logbox &
 
   PID=$!
-  inotifywait -e modify -e move -e create -e delete -e attrib --exclude "logs.db" -r `pwd`
+  inotifywait -e modify -e move -e create -e delete -e attrib --exclude "logs.*\.db" -r `pwd`
 
   while test -d "/proc/$PID";  do
     kill $PID

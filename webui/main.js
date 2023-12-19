@@ -94,10 +94,15 @@ const WebSocketManager = {
 
             console.log('Message from server:', event.data);
 
-            const receivedData = JSON.parse(event.data);
+            if (event.data === "PING") {
+                this.socket.send("PONG");
+                return;
+            }
 
+            const receivedData = JSON.parse(event.data);
             LogTableManager.appendLogs(receivedData);
-        };
+            
+        }.bind(this);
 
         this.socket.onclose = function(event) { 
             console.log('WebSocket connection closed:', event);

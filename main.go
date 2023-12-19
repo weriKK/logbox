@@ -1,13 +1,20 @@
 package main
 
 import (
+	"logbox/internal/common"
 	"logbox/internal/ingest"
 	"logbox/internal/web"
 )
 
 func main() {
-	go web.RunWebServer()
-	go ingest.RunIngestServer()
+
+	cn := common.NewClientNotifier()
+
+	webServer := web.NewWebServer(cn)
+	ingestServer := ingest.NewIngestServer(cn)
+
+	go webServer.Run()
+	go ingestServer.Run()
 
 	select {}
 }

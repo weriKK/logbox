@@ -2,11 +2,22 @@ package ingest
 
 import (
 	"log"
+	"logbox/internal/common"
 	"net"
 	"syscall"
 )
 
-func RunIngestServer() {
+type ingestServer struct {
+	clientNotifier *common.ClientNotifier
+}
+
+func NewIngestServer(cn *common.ClientNotifier) *ingestServer {
+	return &ingestServer{
+		clientNotifier: cn,
+	}
+}
+
+func (is *ingestServer) Run() {
 
 	listener, err := net.Listen("tcp", "localhost:8888")
 	if err != nil {
@@ -33,6 +44,6 @@ func RunIngestServer() {
 			log.Fatalf("Error accepting connection: %v\n", err)
 		}
 
-		go handleIngestClient(conn)
+		go is.handleIngestClient(conn)
 	}
 }

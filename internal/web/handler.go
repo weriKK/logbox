@@ -11,7 +11,7 @@ import (
 	"golang.org/x/net/websocket"
 )
 
-func queryHandler(w http.ResponseWriter, r *http.Request) {
+func (ws *webServer) queryHandler(w http.ResponseWriter, r *http.Request) {
 
 	// s(tart), c(ount), q(uery)
 
@@ -31,38 +31,73 @@ type BrowserStateMessage struct {
 	Timestamp        int    `json:"timestamp"`
 }
 
-func wsHandler(ws *websocket.Conn) {
-	defer ws.Close()
+func (ws *webServer) websocketHandler(wsock *websocket.Conn) {
+	defer wsock.Close()
 
-	log.Printf("%s [%s] \"%s %s\" connected.\n", ws.Request().RemoteAddr, time.Now().Format(time.RFC3339), ws.Request().Method, ws.Request().RequestURI)
+	log.Printf("%s [%s] \"%s %s\" connected.\n", wsock.Request().RemoteAddr, time.Now().Format(time.RFC3339), wsock.Request().Method, wsock.Request().RequestURI)
 
 	var browserState BrowserStateMessage
-	if err := websocket.JSON.Receive(ws, &browserState); err != nil {
+	if err := websocket.JSON.Receive(wsock, &browserState); err != nil {
 		log.Println("Error receiving JSON from WebSocket:", err)
 		return
 	}
 
+	ingestUpdateNotification := make(chan struct{}, 1)
+	ws.clientNotif.Register(ingestUpdateNotification)
+
 	log.Printf("%+v\n", browserState)
 
-	for {
+	pingTicker := time.NewTicker(15 * time.Second)
 
-		q := db.NewSelectMessageQuery().WithStartingId(browserState.LastLogMessageId).WithPattern(browserState.QueryString).Build()
-		logs := db.Query(q)
+	keep_looping := true
+	for keep_looping {
 
-		if 0 < len(*logs) {
-			err := json.NewEncoder(ws).Encode(logs)
-			if err != nil {
-				log.Printf("Error writing to websocket of %s: %v\n", ws.RemoteAddr().String(), err)
-				break
+		select {
+		case <-pingTicker.C:
+			{
+				if err := websocket.Message.Send(wsock, "PING"); err != nil {
+					log.Println("Failed to send PING to websocket:", err)
+					keep_looping = false
+					break
+				}
+
+				var expectedPong string
+				if err := websocket.Message.Receive(wsock, &expectedPong); err != nil {
+					log.Println("Failed to receive PONG on websocket:", err)
+					keep_looping = false
+					break
+				}
+
+				if expectedPong != "PONG" {
+					log.Printf("Invalid PING response on websocket: %q\n", expectedPong)
+					keep_looping = false
+					break
+				}
 			}
 
-			browserState.LastLogMessageId = lastMessageId(browserState.LastLogMessageId, logs)
+		case <-ingestUpdateNotification:
+			{
+				log.Println("Websocket - Ingest update notification received")
+				q := db.NewSelectMessageQuery().WithStartingId(browserState.LastLogMessageId).WithPattern(browserState.QueryString).Build()
+				logs := db.Query(q)
+
+				if 0 < len(*logs) {
+					err := json.NewEncoder(wsock).Encode(logs)
+					if err != nil {
+						log.Printf("Error writing to websocket of %s: %v\n", wsock.RemoteAddr().String(), err)
+						keep_looping = false
+						break
+					}
+
+					browserState.LastLogMessageId = lastMessageId(browserState.LastLogMessageId, logs)
+				}
+			}
 		}
 
-		time.Sleep(10 * time.Second)
+		time.Sleep(1 * time.Second)
 	}
 
-	log.Printf("%s [%s] \"%s %s\" connection closed.\n", ws.Request().RemoteAddr, time.Now().Format(time.RFC3339), ws.Request().Method, ws.Request().RequestURI)
+	log.Printf("%s [%s] \"%s %s\" connection closed.\n", wsock.Request().RemoteAddr, time.Now().Format(time.RFC3339), wsock.Request().Method, wsock.Request().RequestURI)
 }
 
 func lastMessageId(currentId int, logs *[]common.LogMessage) int {
